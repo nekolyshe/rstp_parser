@@ -11,17 +11,19 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    messageparser.cpp \
     rstpdata.cpp
 
 HEADERS += \
     mainwindow.h \
+    messageparser.h \
     rstpdata.h
 
 FORMS += \
     mainwindow.ui
 
 TRANSLATIONS += \
-    untitled_en_US.ts
+    rstp_parer_en_US.ts
 CONFIG += lrelease
 CONFIG += embed_translations
 
