@@ -63,7 +63,7 @@ void MainWindow::UpdateCheckBoxes()
 
 void MainWindow::UpdateListItems()
 {
-    int row = 0;
+    unsigned int row = 0;
 
     ui->twMessages->setRowCount(0);
 
@@ -71,21 +71,19 @@ void MainWindow::UpdateListItems()
         ui->twMessages->insertRow(row);
 
         // the sequence should be kept
+        ui->twMessages->setItem(row, COLLUMN_NUM,        new QTableWidgetItem(QStringLiteral("%1")
+                                                                              .arg(ui->twMessages->rowCount(), 7, 10, QLatin1Char(' '))));
         ui->twMessages->setItem(row, COLLUMN_TIME_STAMP, new QTableWidgetItem("time"));
-        ui->twMessages->setItem(row, COLLUMN_SOF,        new QTableWidgetItem(message.GetSof()));
-        ui->twMessages->setItem(row, COLLUMN_FRAME_TYPE, new QTableWidgetItem(message.GetFrameType()));
-        ui->twMessages->setItem(row, COLLUMN_LENGHT,     new QTableWidgetItem(message.GetLenght()));
-        ui->twMessages->setItem(row, COLLUMN_CHANNEL_ID, new QTableWidgetItem(message.GetChannelId()));
-        ui->twMessages->setItem(row, COLLUMN_SEQ_NUM,    new QTableWidgetItem(message.GetSeqNum()));
-        ui->twMessages->setItem(row, COLLUMN_MESSAGE_ID, new QTableWidgetItem(message.GetMessageId()));
+        ui->twMessages->setItem(row, COLLUMN_SOF,        new QTableWidgetItem(message.GetSofTexted()));
+        ui->twMessages->setItem(row, COLLUMN_FRAME_TYPE, new QTableWidgetItem(message.GetFrameTypeTexted()));
+        ui->twMessages->setItem(row, COLLUMN_LENGHT,     new QTableWidgetItem(message.GetLenghtTexted()));
+        ui->twMessages->setItem(row, COLLUMN_CHANNEL_ID, new QTableWidgetItem(message.GetChannelIdTexted()));
+        ui->twMessages->setItem(row, COLLUMN_SEQ_NUM,    new QTableWidgetItem(message.GetSeqNumTexted()));
+        ui->twMessages->setItem(row, COLLUMN_MESSAGE_ID, new QTableWidgetItem(message.GetMessageIdTexted()));
         ui->twMessages->setItem(row, COLLUMN_PAYLOAD,    new QTableWidgetItem("payload"));
 
         row++;
     }
-
-//    for (int i = 0; i < collum; i++ ) {
-//        mUi->TwRawData->item(row, i)->setForeground(directionColor[direction]);
-//    }
 }
 
 

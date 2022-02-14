@@ -2,63 +2,63 @@
 
 #define MIN_MSG_SIZE 6
 
-ParsedMessageBase::ParsedMessageBase(const QByteArray &rawData) : mData(rawData), mIsValid(true)
+const QString kEmptyValText("(empty)");
+
+ParsedMessageBase::ParsedMessageBase(const QByteArray &rawData) : mIsValid(true), mData(rawData)
 {
     if (mData.size() < MIN_MSG_SIZE) { //TODO: add additional check
         mIsValid = false;
     }
 }
 
-uint8_t ParsedMessageBase::GetSof() const
+QString ParsedMessageBase::GetSofTexted() const
 {
-    if (!IsValid()) {
-        return 0;
-    }
-
-    return mData[INDEX_SOF];
+    return GetTextedValWithIndex(INDEX_SOF);
 }
 
-uint8_t ParsedMessageBase::GetFrameType() const
+QString ParsedMessageBase::GetFrameTypeTexted() const
 {
-    if (!IsValid()) {
-        return 0;
-    }
-    return mData[INDEX_FRAME_TYPE];
+    return GetTextedValWithIndex(INDEX_FRAME_TYPE);
 }
 
-uint8_t ParsedMessageBase::GetLenght() const
+QString ParsedMessageBase::GetLenghtTexted() const
 {
-    if (!IsValid()) {
-        return 0;
-    }
-    return mData[INDEX_LEN];
+    return GetTextedValWithIndex(INDEX_LEN);
 }
 
-uint8_t ParsedMessageBase::GetChannelId() const
+QString ParsedMessageBase::GetChannelIdTexted() const
 {
-    if (!IsValid()) {
-        return 0;
-    }
-    return mData[INDEX_CHANNEL_ID];
+    return GetTextedValWithIndex(INDEX_CHANNEL_ID);
 }
 
-uint8_t ParsedMessageBase::GetSeqNum() const
+QString ParsedMessageBase::GetSeqNumTexted() const
 {
-    if (!IsValid()) {
-        return 0;
-    }
-    return mData[INDEX_SEQ_NUM];
+    return GetTextedValWithIndex(INDEX_SEQ_NUM);
 }
 
-uint8_t ParsedMessageBase::GetMessageId() const
+QString ParsedMessageBase::GetMessageIdTexted() const
 {
-    if (!IsValid()) {
-        return 0;
-    }
-    return mData[INDEX_MSG_ID];
+    return GetTextedValWithIndex(INDEX_MSG_ID);
 }
 
 bool ParsedMessageBase::IsValid() const
 {
     return mIsValid;
 }
+
+QString ParsedMessageBase::U8ToText(const uint8_t val) const
+{
+    return QString("0x%1").arg(val, 2, 16, QLatin1Char( '0' ));
+}
+
+QString ParsedMessageBase::GetTextedValWithIndex(const uint8_t index) const
+{
+    if (index < mData.size()) {
+        return U8ToText(mData[index]);
+    }
+
+    return kEmptyValText;
+}
+
+
+

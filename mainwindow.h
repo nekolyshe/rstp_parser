@@ -41,6 +41,7 @@ private:
     bool mShowPayload;
 
     enum {
+        COLLUMN_NUM,
         COLLUMN_TIME_STAMP,
         COLLUMN_SOF,
         COLLUMN_FRAME_TYPE,

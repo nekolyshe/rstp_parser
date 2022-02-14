@@ -26,7 +26,7 @@ static uint32_t myToInt(QString& strValue) {//TODO: rename
 
 static void StringToU8(const QString &str, QByteArray &payload)
 {
-    QStringList listValues = str.split(QRegExp("[^0-9.]"), QString::SkipEmptyParts);
+    QStringList listValues = str.split(QRegExp("[^0-9A-F]"), QString::SkipEmptyParts);
 
     payload.clear();
 
@@ -38,7 +38,7 @@ static void StringToU8(const QString &str, QByteArray &payload)
 static void ParceTimestamp(const QString &timestamp, QTime &timeDate)
 {
     QStringList listValues = timestamp.split(QRegExp("[^0-9]"), QString::SkipEmptyParts);
-    QStringList listNames = timestamp.split(QRegExp("[^A-z, µ]"), QString::SkipEmptyParts);
+    QStringList listNames = timestamp.split(QRegExp("[^A-zµ]"), QString::SkipEmptyParts);
 
     int hour    = 0,
         min     = 0,
