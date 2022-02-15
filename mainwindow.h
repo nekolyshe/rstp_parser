@@ -3,6 +3,7 @@
 
 #include "rstpdata.h"
 #include "messageparser.h"
+#include "packetwindow.h"
 
 #include <QMainWindow>
 #include <QTableWidgetItem>
@@ -32,6 +33,10 @@ private slots:
 
     void on_pbAdjustFilter_clicked();
 
+    void on_twMessages_itemDoubleClicked(QTableWidgetItem *item);
+
+    void on_twMessages_cellDoubleClicked(int row, int column);
+
 private:
 
     bool mShowSof;
@@ -43,30 +48,43 @@ private:
     bool mShowPayload;
 
     enum {
-        COLLUMN_NUM,
-        COLLUMN_TIME_STAMP,
-        COLLUMN_SOF,
-        COLLUMN_FRAME_TYPE,
-        COLLUMN_LENGHT,
-        COLLUMN_CHANNEL_ID,
-        COLLUMN_SEQ_NUM,
-        COLLUMN_MESSAGE_ID,
-        COLLUMN_PAYLOAD,
+        COLUMN_NUM,
+        COLUMN_TIME_STAMP,
+        COLUMN_SOF,
+        COLUMN_FRAME_TYPE,
+        COLUMN_LENGHT,
+        COLUMN_CHANNEL_ID,
+        COLUMN_SEQ_NUM,
+        COLUMN_MESSAGE_ID,
+        COLUMN_PAYLOAD,
 
-        COLLUMN_COINT
+        COLUMN_COINT
+    };
+
+    struct Message {
+        Message(ParsedMessageBase msg, QTime time) : msg(msg), timestamp(time)
+        {}
+
+        ParsedMessageBase msg;
+        QTime timestamp;
     };
 
     Ui::MainWindow *ui;
     RstpData *mRstpData;
-    QList<ParsedMessageBase> mMessage;
+    QList<Message> mMessage;
     QStringList mChannelFilter;
     QStringList mMsgFilter;
+    packetWindow *mPacketWindow;
 
     void initSlots();
     void initFilterText();
     void UpdateCheckBoxes();
+    void AddListItem(unsigned int row, unsigned int column, const QString &text);
+    const QString ConvertMsgToText(const QByteArray &arr);
     void UpdateListItems();
     void UpdateListview();
+
+    const QString EmptyValText() const;
 
     bool isFilteredPersist(const QTableWidgetItem *item, const QStringList &filter);
 };

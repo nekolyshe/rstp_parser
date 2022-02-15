@@ -5,22 +5,25 @@
 
 MainWindow::MainWindow(QWidget *parent) :
       QMainWindow(parent),
-      mShowSof(true),
+      mShowSof(false),
       mShowFrameType(true),
-      mShowLenght(true),
+      mShowLenght(false),
       mShowChannelId(true),
-      mShowSeqNum(true),
+      mShowSeqNum(false),
       mShowMessageId(true),
       mShowPayload(true),
       ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     mRstpData = new RstpData();
+    mPacketWindow = new packetWindow();
 
     initSlots();
     initFilterText();
 
     UpdateCheckBoxes();
+
+    ParsedMessageBase::AddDescriptions(qApp->applicationDirPath() + "/data/");
 }
 
 MainWindow::~MainWindow()
@@ -40,7 +43,7 @@ void MainWindow::on_updateList(const RstpData::RstpDataList &dataList)
     mMessage.clear();
 
     for(const auto &msg: dataList) {
-        mMessage << ParsedMessageBase(msg.data);
+        mMessage << Message(msg.data, msg.timestamp);
     }
 
     UpdateListItems();
@@ -69,6 +72,29 @@ void MainWindow::UpdateCheckBoxes()
     ui->checkBox_msgId->setChecked(mShowMessageId);
 }
 
+void MainWindow::AddListItem(unsigned int row, unsigned int column, const QString &text)
+{
+    QTableWidgetItem *item = new QTableWidgetItem(text);
+    item->setTextAlignment(Qt::AlignHCenter);
+
+    ui->twMessages->setItem(row, column, item);
+}
+
+const QString MainWindow::ConvertMsgToText(const QByteArray &arr)
+{
+    if(arr.size() == 0) {
+        return EmptyValText();
+    }
+
+    QString text("");
+
+    for (const uint8_t item : arr) {
+        text += QString("%1 ").arg(item, 2, 16, QLatin1Char( '0' ));
+    }
+
+    return text;
+}
+
 void MainWindow::UpdateListItems()
 {
     unsigned int row = 0;
@@ -78,17 +104,15 @@ void MainWindow::UpdateListItems()
     for (const auto &message : qAsConst(mMessage)) {
         ui->twMessages->insertRow(row);
 
-        // the sequence should be kept
-        ui->twMessages->setItem(row, COLLUMN_NUM,        new QTableWidgetItem(QStringLiteral("%1")
-                                                                              .arg(ui->twMessages->rowCount(), 7, 10, QLatin1Char(' '))));
-        ui->twMessages->setItem(row, COLLUMN_TIME_STAMP, new QTableWidgetItem("time"));
-        ui->twMessages->setItem(row, COLLUMN_SOF,        new QTableWidgetItem(message.GetSofTexted()));
-        ui->twMessages->setItem(row, COLLUMN_FRAME_TYPE, new QTableWidgetItem(message.GetFrameTypeTexted()));
-        ui->twMessages->setItem(row, COLLUMN_LENGHT,     new QTableWidgetItem(message.GetLenghtTexted()));
-        ui->twMessages->setItem(row, COLLUMN_CHANNEL_ID, new QTableWidgetItem(message.GetChannelIdTexted()));
-        ui->twMessages->setItem(row, COLLUMN_SEQ_NUM,    new QTableWidgetItem(message.GetSeqNumTexted()));
-        ui->twMessages->setItem(row, COLLUMN_MESSAGE_ID, new QTableWidgetItem(message.GetMessageIdTexted()));
-        ui->twMessages->setItem(row, COLLUMN_PAYLOAD,    new QTableWidgetItem(message.GetPayloadTexted()));
+        AddListItem(row, COLUMN_NUM, (QStringLiteral("%1").arg(ui->twMessages->rowCount(), 7, 10, QLatin1Char(' '))));
+        AddListItem(row, COLUMN_TIME_STAMP, message.timestamp.toString("hh:mm:ss.zzz"));
+        AddListItem(row, COLUMN_SOF,        ConvertMsgToText(message.msg.GetSof()));
+        AddListItem(row, COLUMN_FRAME_TYPE, ConvertMsgToText(message.msg.GetFrameType()));
+        AddListItem(row, COLUMN_LENGHT,     ConvertMsgToText(message.msg.GetLenght()));
+        AddListItem(row, COLUMN_CHANNEL_ID, ConvertMsgToText(message.msg.GetChannelId()));
+        AddListItem(row, COLUMN_SEQ_NUM,    ConvertMsgToText(message.msg.GetSeqNum()));
+        AddListItem(row, COLUMN_MESSAGE_ID, ConvertMsgToText(message.msg.GetMessageId()));
+        AddListItem(row, COLUMN_PAYLOAD,    ConvertMsgToText(message.msg.GetRawData()));
 
         row++;
     }
@@ -96,23 +120,28 @@ void MainWindow::UpdateListItems()
 
 void MainWindow::UpdateListview()
 {
-    ui->twMessages->setColumnHidden(COLLUMN_SOF,        !mShowSof);
-    ui->twMessages->setColumnHidden(COLLUMN_FRAME_TYPE, !mShowFrameType);
-    ui->twMessages->setColumnHidden(COLLUMN_LENGHT,     !mShowLenght);
-    ui->twMessages->setColumnHidden(COLLUMN_CHANNEL_ID, !mShowChannelId);
-    ui->twMessages->setColumnHidden(COLLUMN_SEQ_NUM,    !mShowSeqNum);
-    ui->twMessages->setColumnHidden(COLLUMN_MESSAGE_ID, !mShowMessageId);
-    ui->twMessages->setColumnHidden(COLLUMN_PAYLOAD,    !mShowPayload);
+    ui->twMessages->setColumnHidden(COLUMN_SOF,        !mShowSof);
+    ui->twMessages->setColumnHidden(COLUMN_FRAME_TYPE, !mShowFrameType);
+    ui->twMessages->setColumnHidden(COLUMN_LENGHT,     !mShowLenght);
+    ui->twMessages->setColumnHidden(COLUMN_CHANNEL_ID, !mShowChannelId);
+    ui->twMessages->setColumnHidden(COLUMN_SEQ_NUM,    !mShowSeqNum);
+    ui->twMessages->setColumnHidden(COLUMN_MESSAGE_ID, !mShowMessageId);
+    ui->twMessages->setColumnHidden(COLUMN_PAYLOAD,    !mShowPayload);
 
     const unsigned int rows = ui->twMessages->rowCount();
 
     for (unsigned int i = 0; i < rows; i++) {
 
-        bool showByMessageId = isFilteredPersist(ui->twMessages->item(i, COLLUMN_MESSAGE_ID), mMsgFilter);
-        bool showByChannel = isFilteredPersist(ui->twMessages->item(i, COLLUMN_CHANNEL_ID), mChannelFilter);
+        bool showByMessageId = isFilteredPersist(ui->twMessages->item(i, COLUMN_MESSAGE_ID), mMsgFilter);
+        bool showByChannel = isFilteredPersist(ui->twMessages->item(i, COLUMN_CHANNEL_ID), mChannelFilter);
 
         ui->twMessages->setRowHidden(i, !(showByChannel && showByMessageId));
     }
+}
+
+const QString MainWindow::EmptyValText() const
+{
+    return QString("(empty)");
 }
 
 bool MainWindow::isFilteredPersist(const QTableWidgetItem *item, const QStringList &filter) // TODO: looks like a piece of shit
@@ -199,5 +228,19 @@ void MainWindow::on_pbAdjustFilter_clicked()
     mChannelFilter = ui->leFilterChannels->text().split(" ", QString::SkipEmptyParts);
 
     UpdateListview();
+}
+
+void MainWindow::on_twMessages_cellDoubleClicked(int row, int column)
+{
+    (void)column;
+
+    mPacketWindow->AddWindowData(mMessage[row].msg.getDescriptions(), mMessage[row].msg.GetRawData());
+    mPacketWindow->show();
+}
+
+
+void MainWindow::on_twMessages_itemDoubleClicked(QTableWidgetItem *item)
+{
+
 }
 

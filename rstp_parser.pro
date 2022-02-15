@@ -2,7 +2,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -12,15 +12,18 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     messageparser.cpp \
+    packetwindow.cpp \
     rstpdata.cpp
 
 HEADERS += \
     mainwindow.h \
     messageparser.h \
+    packetwindow.h \
     rstpdata.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    packetwindow.ui
 
 TRANSLATIONS += \
     rstp_parer_en_US.ts
