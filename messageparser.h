@@ -16,8 +16,8 @@ public:
     QString GetChannelIdTexted() const;
     QString GetSeqNumTexted()    const;
     QString GetMessageIdTexted() const;
+    QString GetPayloadTexted()   const;
 
-    bool GetChannelId(uint8_t &channelId) const;
 
     bool IsValid() const;
 
@@ -32,13 +32,16 @@ private:
         INDEX_MSG_ID     = 5,
         INDEX_MSG_LEN    = 6,
 
-        INDEX_PAYLOAD    = 5
+        INDEX_PAYLOAD    = 7,
+
+        CRC_SIZE_BYTES   = 2
     };
 
     QString U8ToText(const uint8_t val) const;
     const QString EmptyValText() const;
     bool GetValWithIndex(const uint8_t index, uint8_t &value) const;
     QString GetTextedValWithIndex(const uint8_t index) const;
+    bool GetChannelId(uint8_t &channelId) const;
 
     bool mIsValid;
     QByteArray mData;

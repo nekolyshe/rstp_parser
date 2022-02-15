@@ -39,6 +39,26 @@ QString ParsedMessageBase::GetMessageIdTexted() const
     return GetTextedValWithIndex(INDEX_MSG_ID);
 }
 
+QString ParsedMessageBase::GetPayloadTexted() const
+{
+    QString text;
+    uint8_t value;
+
+    if (mData.count() < INDEX_PAYLOAD + CRC_SIZE_BYTES) {
+        return EmptyValText();
+    }
+
+    const unsigned int lastIndex = mData.count() - CRC_SIZE_BYTES;
+
+    for (unsigned int i = INDEX_PAYLOAD; i < lastIndex; i++) {
+        if (GetValWithIndex(i, value)) {
+            text += QString("0x%1 ").arg(value, 2, 16, QLatin1Char( '0' ));
+        }
+    }
+
+    return text;
+}
+
 bool ParsedMessageBase::GetChannelId(uint8_t &channelId) const
 {
     return GetValWithIndex(INDEX_CHANNEL_ID, channelId);

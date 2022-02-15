@@ -88,7 +88,7 @@ void MainWindow::UpdateListItems()
         ui->twMessages->setItem(row, COLLUMN_CHANNEL_ID, new QTableWidgetItem(message.GetChannelIdTexted()));
         ui->twMessages->setItem(row, COLLUMN_SEQ_NUM,    new QTableWidgetItem(message.GetSeqNumTexted()));
         ui->twMessages->setItem(row, COLLUMN_MESSAGE_ID, new QTableWidgetItem(message.GetMessageIdTexted()));
-        ui->twMessages->setItem(row, COLLUMN_PAYLOAD,    new QTableWidgetItem("payload"));
+        ui->twMessages->setItem(row, COLLUMN_PAYLOAD,    new QTableWidgetItem(message.GetPayloadTexted()));
 
         row++;
     }
