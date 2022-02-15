@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mRstpData = new RstpData();
 
     initSlots();
+    initFilterText();
 
     UpdateCheckBoxes();
 }
@@ -49,6 +50,13 @@ void MainWindow::on_updateList(const RstpData::RstpDataList &dataList)
 void MainWindow::initSlots()
 {
     connect(mRstpData, &RstpData::ListUpdated, this, &MainWindow::on_updateList);
+}
+
+void MainWindow::initFilterText()
+{
+    QRegExp rx ("[0-9A-Fa-f ]+");
+    ui->leFilterChannels->setValidator (new QRegExpValidator (rx, this));
+    ui->leFilterMsgId->setValidator (new QRegExpValidator (rx, this));
 }
 
 void MainWindow::UpdateCheckBoxes()
@@ -86,16 +94,7 @@ void MainWindow::UpdateListItems()
     }
 }
 
-
 void MainWindow::UpdateListview()
-
-//bool mShowSof;
-//bool mShowFrameType;
-//bool mShowLenght;
-//bool mShowChannelId;
-//bool mShowSeqNum;
-//bool mShowMessageId;
-//bool mShowPayload;
 {
     ui->twMessages->setColumnHidden(COLLUMN_SOF,        !mShowSof);
     ui->twMessages->setColumnHidden(COLLUMN_FRAME_TYPE, !mShowFrameType);
@@ -104,6 +103,35 @@ void MainWindow::UpdateListview()
     ui->twMessages->setColumnHidden(COLLUMN_SEQ_NUM,    !mShowSeqNum);
     ui->twMessages->setColumnHidden(COLLUMN_MESSAGE_ID, !mShowMessageId);
     ui->twMessages->setColumnHidden(COLLUMN_PAYLOAD,    !mShowPayload);
+
+    const unsigned int rows = ui->twMessages->rowCount();
+
+    for (unsigned int i = 0; i < rows; i++) {
+
+        bool showByMessageId = isFilteredPersist(ui->twMessages->item(i, COLLUMN_MESSAGE_ID), mMsgFilter);
+        bool showByChannel = isFilteredPersist(ui->twMessages->item(i, COLLUMN_CHANNEL_ID), mChannelFilter);
+
+        ui->twMessages->setRowHidden(i, !(showByChannel && showByMessageId));
+    }
+}
+
+bool MainWindow::isFilteredPersist(const QTableWidgetItem *item, const QStringList &filter) // TODO: looks like a piece of shit
+{
+    if (filter.count() == 0) {
+        return true;
+    }
+
+    if (item == nullptr) {
+        return false;
+    }
+
+    for (const auto &str : filter) {
+        if (item->text().contains(str)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /*
@@ -164,3 +192,12 @@ void MainWindow::on_checkBox_payload_stateChanged(int arg1)
     mShowPayload = (arg1 != 0);
     UpdateListview();
 }
+
+void MainWindow::on_pbAdjustFilter_clicked()
+{
+    mMsgFilter = ui->leFilterMsgId->text().split(" ", QString::SkipEmptyParts);
+    mChannelFilter = ui->leFilterChannels->text().split(" ", QString::SkipEmptyParts);
+
+    UpdateListview();
+}
+

@@ -5,6 +5,7 @@
 #include "messageparser.h"
 
 #include <QMainWindow>
+#include <QTableWidgetItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,8 +30,9 @@ private slots:
     void on_checkBox_msgId_stateChanged(int arg1);
     void on_checkBox_payload_stateChanged(int arg1);
 
+    void on_pbAdjustFilter_clicked();
+
 private:
-    void initSlots();
 
     bool mShowSof;
     bool mShowFrameType;
@@ -57,10 +59,15 @@ private:
     Ui::MainWindow *ui;
     RstpData *mRstpData;
     QList<ParsedMessageBase> mMessage;
+    QStringList mChannelFilter;
+    QStringList mMsgFilter;
 
+    void initSlots();
+    void initFilterText();
     void UpdateCheckBoxes();
     void UpdateListItems();
     void UpdateListview();
 
+    bool isFilteredPersist(const QTableWidgetItem *item, const QStringList &filter);
 };
 #endif // MAINWINDOW_H

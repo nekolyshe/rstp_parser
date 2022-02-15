@@ -45,7 +45,7 @@ static void ParceTimestamp(const QString &timestamp, QTime &timeDate)
         sec     = 0,
         msec    = 0;
 
-    for(int i = 0; i < listNames.size(); i++) { //TODO: somethind if data isn`t correct
+    for(int i = 0; i < listNames.count(); i++) { //TODO: somethind if data isn`t correct
         if(listNames[i] == QString("h")) {
             hour = myToInt(listValues[i]);
         } else if(listNames[i] == QString("m")) {

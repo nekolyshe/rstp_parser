@@ -17,6 +17,8 @@ public:
     QString GetSeqNumTexted()    const;
     QString GetMessageIdTexted() const;
 
+    bool GetChannelId(uint8_t &channelId) const;
+
     bool IsValid() const;
 
 private:
@@ -34,6 +36,8 @@ private:
     };
 
     QString U8ToText(const uint8_t val) const;
+    const QString EmptyValText() const;
+    bool GetValWithIndex(const uint8_t index, uint8_t &value) const;
     QString GetTextedValWithIndex(const uint8_t index) const;
 
     bool mIsValid;

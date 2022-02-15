@@ -2,8 +2,6 @@
 
 #define MIN_MSG_SIZE 6
 
-const QString kEmptyValText("(empty)");
-
 ParsedMessageBase::ParsedMessageBase(const QByteArray &rawData) : mIsValid(true), mData(rawData)
 {
     if (mData.size() < MIN_MSG_SIZE) { //TODO: add additional check
@@ -41,6 +39,11 @@ QString ParsedMessageBase::GetMessageIdTexted() const
     return GetTextedValWithIndex(INDEX_MSG_ID);
 }
 
+bool ParsedMessageBase::GetChannelId(uint8_t &channelId) const
+{
+    return GetValWithIndex(INDEX_CHANNEL_ID, channelId);
+}
+
 bool ParsedMessageBase::IsValid() const
 {
     return mIsValid;
@@ -51,13 +54,32 @@ QString ParsedMessageBase::U8ToText(const uint8_t val) const
     return QString("0x%1").arg(val, 2, 16, QLatin1Char( '0' ));
 }
 
-QString ParsedMessageBase::GetTextedValWithIndex(const uint8_t index) const
+const QString ParsedMessageBase::EmptyValText() const
 {
+    return QString("(empty)");
+}
+
+bool ParsedMessageBase::GetValWithIndex(const uint8_t index, uint8_t &value) const
+{
+    bool status = false;
+
     if (index < mData.size()) {
-        return U8ToText(mData[index]);
+        value = mData[index];
+        status = true;
     }
 
-    return kEmptyValText;
+    return status;
+}
+
+QString ParsedMessageBase::GetTextedValWithIndex(const uint8_t index) const
+{
+    uint8_t value = 0;
+
+    if (GetValWithIndex(index, value)) {
+        return U8ToText(value);
+    }
+
+    return EmptyValText();
 }
 
 
