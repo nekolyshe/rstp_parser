@@ -1,0 +1,196 @@
+{
+  "Interface_Version": "1.1",
+  "FrameWork_OR_Thread": "FRAMEWORK",
+  "Interface_Name": "Switch_Panel_Messsages",
+  "Interface_Description": "This is the interface for exchanging the switch panel data between the CMP and the NAD",
+  "Interface_Channel": 80,
+  "Interface_Messages": [
+    {
+      "Msg_Name": "onECall_TestMode",
+      "Msg_Description": [
+        "Interval: Periodic",
+		"Document Name: MOD_RQ_Sub-Interface-VAL-Emergency-Call",
+		"Object ID: MOD_RQ_SI_V_EC_481",
+        "Description: Represents the status of the TestMode button pressed at the switchbox. This message should be repeated every 50 milli seconds with accumulated time until the button press is released."
+      ],
+      "Msg_ID": 10,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_ReqType": "UNSOLICITED_UPDATE",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "TestModeButtonEvent",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0 = PRESSED, 1 = RELEASED",
+            "Description: Represents an event from the test mode button."
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint32_t",
+          "Param_Name": "AccumulatedTime",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: milliseconds",
+            "Range: 0 to 4294967250, 0xFFFFFFFF",
+            "Description: The accumulated time from the moment pressed until this message. When the button is pressed longer then 4294967250, the value must be 0xFFFFFFFF until the button is released. On the RELEASE event, the actual pressed time will be added, or it is 0xFFFFFFFF when the maximum was already reached."
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onServiceButtonPress",
+      "Msg_Description": [
+        "Interval: Periodic",
+        "Description: Represents the status of the Service button pressed at the switchbox. This message should be repeated every 50 milli seconds with accumulated time until the button press is released."
+      ],
+      "Msg_ID": 11,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_ReqType": "UNSOLICITED_UPDATE",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "ServiceButtonEvent",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0 = PRESSED, 1 = RELEASED",
+            "Description: Represents an event from the service button."
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint32_t",
+          "Param_Name": "AccumulatedTime",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: milliseconds",
+            "Range: 0 to 4294967250, 0xFFFFFFFF",
+            "Description: The accumulated time from the moment pressed until this message. When the button is pressed longer then 4294967250, the value must be 0xFFFFFFFF until the button is released. On the RELEASE event, the actual pressed time will be added, or it is 0xFFFFFFFF when the maximum was already reached."
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onInfoButtonPress",
+      "Msg_Description": [
+        "Interval: Periodic",
+        "Description: Represents the status of the info button pressed at the switchbox. This message should be repeated every 50 milli seconds with accumulated time until the button press is released."
+      ],
+      "Msg_ID": 12,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_ReqType": "UNSOLICITED_UPDATE",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "InfoButtonEvent",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0 = PRESSED, 1 = RELEASED",
+            "Description: Represents an event from the info button."
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint32_t",
+          "Param_Name": "AccumulatedTime",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: milliseconds",
+            "Range: 0 to 4294967250, 0xFFFFFFFF",
+            "Description: The accumulated time from the moment pressed until this message. When the button is pressed longer then 4294967250, the value must be 0xFFFFFFFF until the button is released. On the RELEASE event, the actual pressed time will be added, or it is 0xFFFFFFFF when the maximum was already reached."
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "OnSOS_Trigger",
+      "Msg_Description": [
+        "Interval: Periodic",
+        "Document Name: MOD_RQ_Sub-Interface-VAL-Emergency-Call",
+        "Object ID: MOD_RQ_SI_V_EC_468",
+        "Description: Represents the status of the Emergency button pressed at the switchbox. This message should be repeated every 50 milli seconds with accumulated time until the button press is released."
+      ],
+      "Msg_ID": 13,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_ReqType": "UNSOLICITED_UPDATE",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "EmergencyButtonEvent",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0 = PRESSED, 1 = RELEASED",
+            "Description: Represents an event from the ECall button."
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint32_t",
+          "Param_Name": "AccumulatedTime",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: milliseconds",
+            "Range: 0 to 4294967250, 0xFFFFFFFF",
+            "Description: The accumulated time from the moment pressed until this message. When the button is pressed longer then 4294967250, the value must be 0xFFFFFFFF until the button is released. On the RELEASE event, the actual pressed time will be added, or it is 0xFFFFFFFF when the maximum was already reached."
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onECall_SwitchLED",
+      "Msg_Description": [
+        "Interval: Cyclic",
+        "Document Name: MOD_RQ_Sub-Interface-VAL-Emergency-Call",
+        "Object ID: MOD_RQ_SI_V_EC_599",
+        "Description: Updated values of LEDs at the switchbox. It shall be possible to change the indication characteristic of the main status indicator (LED) by coding: @eCall_Indication_Concept. This message is repeated every 200 milli seconds."
+      ],
+      "Msg_ID": 14,
+      "Msg_Direction": "NAD2CMP",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "LED_Info",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=LED_OFF, 1=LED_GREEN, 2=LED_GREEN_0_5_HZ, 3=LED_GREEN_1_0_HZ, 4=LED_RED, 5=LED_RED_0_5_HZ, 6=LED_RED_1_0_HZ, 7=LED_MODE_DIALING, 8=LED_MODE_TRANSMITTING",
+            "Description: This message contains both color as well as frequency information."
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "setHardkeyCloggedTime",
+      "Msg_Description": [
+        "Interval: onChange",
+        "Description: Provide value @eCall_Hardkey_Clogged_Time from eCall dataset"
+      ],
+      "Msg_ID": 15,
+      "Msg_Direction": "NAD2CMP",
+      "Msg_ReqType": "FIRE_FORGET",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint32_t",
+          "Param_Name": "cloggedTime",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: s",
+            "Range: 0-100",
+            "Description: The time period for detecting a clogged eCall hardkey. CMP must assume a default of 30s until this message is received."
+          ]
+        }
+      ]
+    }
+  ]
+}

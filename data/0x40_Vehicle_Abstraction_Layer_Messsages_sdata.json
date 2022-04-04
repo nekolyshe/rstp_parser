@@ -1,0 +1,365 @@
+{
+  "Interface_Version": "0.4",
+  "FrameWork_OR_Thread": "FRAMEWORK",
+  "Interface_Name": "Vehicle_Abstraction_Layer_Messsages",
+  "Interface_Description": "This is the interface for exchanging vehicle abstraction layer messages between NAD & CMP",
+  "Interface_Channel": 64,
+  "Interface_Messages": [
+    {
+      "Msg_Name": "onUpdateInVehicle_Language",
+      "Msg_Description": [
+        "Interval: OnChange",
+        "Description: HMI language represents the currently selected language setting from the instrument cluster",
+        "Document Name: MOD_RQ_Sub-Interface-VAL-System-Status_Filter_EmergencyCall.xlsx",
+        "Object ID: MOD_RQ_SI_V_SyS_245"
+      ],
+      "Msg_ID": 102,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "std::string",
+          "Param_Name": "Info_HMI_Language",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: NA",
+            "Range: NA",
+            "Description: HMI language, which is the value in the column 'language_code' from the table 'Info HMI Language' at tab 'Tabelle2' in the document MOD_RQ_Sub-Interface-VAL-System-Status_Filter_EmergencyCall.xlsx, received at 29-12-2016 at ICT."
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint8_t",
+          "Param_Name": "Status",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=VALID",
+            "Description: Tells about the validity of the language. When the message is not received or out of range, the status will become INVALID. When the status is INVALID, the 'Info_HMI_Language' has an empty string."
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onUpdateEngine_Fuel_Type",
+      "Msg_Description": [
+        "Interval: OnChange",
+        "Document Name: MOD_RQ_Sub-Interface-VAL-System-Status_Filter_EmergencyCall.xlsx",
+        "Object ID: MOD_RQ_SI_V_SyS_126",
+        "Description:  Represents the utilized primary and secondary engine type from a fuel perspective."
+      ],
+      "Msg_ID": 104,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "VAL_Engine_Fuel_Type_Primary",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=UNSUPPORTED, 1=INVALID, 2=GASOLINE, 3=DIESEL, 4=CNG, 5=LPG, 6=ELECTRO, 7=HYDROGEN",
+            "Description: primary fuel type"
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint8_t",
+          "Param_Name": "VAL_Engine_Fuel_Type_Secondary",
+          "Param_Description": [
+              "Signal: NA",
+              "Unit: Enum",
+              "Range: 0=UNSUPPORTED, 1=INVALID, 2=GASOLINE, 3=DIESEL, 4=CNG, 5=LPG, 6=ELECTRO, 7=HYDROGEN",
+              "Description: secondary fuel type"
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onUpdateSystem_State_Information",
+      "Msg_Description": [
+        "Interval: OnChange",
+        "Description: This information signalises that the Transportmodus is active in the vehicle"
+      ],
+      "Msg_ID": 105,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "SS_Info",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: NA",
+            "Range: NA",
+            "Description: Bitfield. Bit descriptions (LSB First):\n 0- Transport_Mode on/off\n 1- Transport Protection on/off",
+            "Document Name: MOD_RQ_Sub-Interface-VAL-System-Status_Filter_EmergencyCall.xlsx",
+            "Object ID: MOD_RQ_SI_V_SyS_63",
+            "Object ID: MOD_RQ_SI_V_SyS_66"
+          ],
+          "Param_bit_values": [
+            {
+              "Bit_Index": 0,
+              "Bit_Description": [ "Transport_Mode on/off" ]
+            },
+            {
+              "Bit_Index": 1,
+              "Bit_Description": [ "Transport Protection on/off" ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onUpdateVehicle_Speed",
+      "Msg_Description": [
+        "Interval: OnChange",
+        "Development: Vehicle speed represents the current speed as indicated in the instrument cluster",
+        "Document Name: MOD_RQ_Sub-Interface-VAL-System-Status_Filter_EmergencyCall.xlsx",
+        "Object ID: MOD_RQ_SI_V_SyS_258"
+      ],
+      "Msg_ID": 106,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "int32_t",
+          "Param_Name": "Engine_Vehicle_Speed",
+          "Param_Description": [
+            "Signal: Kombi_01:KBI_angez_Geschw",
+            "Unit: 0,001km/h",
+            "Range: 0 .. 325120",
+            "Description: Engine vehicle speed"
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint8_t",
+          "Param_Name": "Status",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=VALID",
+            "Description: Tells about the validity of the data. When the message is not received or out of range (> 325,12 km/h), the status will become INVALID. When the status is INVALID, the 'Engine_Vehicle_Speed' will be set to zero."
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onUpdateMileage",
+      "Msg_Description": [
+        "Interval: OnChange",
+        "Description: Actual Mileage as shown on the odometer. Use the message Diagnose_01:KBI_Kilometerstand instead of Kombi_02:KBI_Kilometerstand as specified in the Audi VAL requirement since CBox is not receiver of the Kombi_02:KBI_Kilometerstand message.",
+        "Document Name: MOD_RQ_Sub-Interface-VAL-System-Status_Filter_EmergencyCall.xlsx",
+        "Object ID: MOD_RQ_SI_V_SyS_113"
+      ],
+      "Msg_ID": 107,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "int32_t",
+          "Param_Name": "Engine_Mileage",
+          "Param_Description": [
+            "Signal: Diagnose_01:KBI_Kilometerstand",
+            "Unit: km",
+            "Range: 0..1048573",
+            "Description: Actual Mileage, must be zero when the Status is not equal to OK"
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint8_t",
+          "Param_Name": "Status",
+          "Param_Description": [
+            "Signal: Diagnose_01:KBI_Kilometerstand",
+            "Unit: Enum",
+            "Range: 0=OK, 1=INIT, 2=ERROR",
+            "Description: The status of the mileage signal."
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onUpdateVehicle_Identification_Number",
+      "Msg_Description": [
+        "Interval: OnChange",
+        "Description: A vehicle identification number comprises out of 17 digits and identifies any vehicle worldwide uniquely",
+        "Document Name: MOD_RQ_Sub-Interface-VAL-System-Status_Filter_EmergencyCall.xlsx",
+        "Object ID: MOD_RQ_SI_V_SyS_32"
+      ],
+      "Msg_ID": 108,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "std::string",
+          "Param_Name": "Engine_VIN",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: NA",
+            "Range: NA",
+            "Description: Engine VIN number"
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onSystemTemperature",
+      "Msg_Description": [
+        "Interval: OnChange",
+        "Description: Will inform us about the system temperature"
+      ],
+      "Msg_ID": 109,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "int32_t",
+          "Param_Name": "system_Temperature",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: degreeCelcius",
+            "Range: NA",
+            "Description: System temperature"
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onUpdatePassengerData",
+      "Msg_Description": [
+        "Interval: OnChange",
+        "Description: Passenger Data",
+        "Document Name: MOD_RQ_Sub-Interface-VAL-Emergency-Call.xlsx",
+        "Object ID: MOD_RQ_SI_V_EC_499"
+      ],
+      "Msg_ID": 110,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "First_Row_Left",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=OCCUPIED, 2=NOT_OCCUPIED",
+            "Description: Describes the occupation of the chair at the location: first row left"
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint8_t",
+          "Param_Name": "First_Row_Middle",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=OCCUPIED, 2=NOT_OCCUPIED",
+            "Description: Describes the occupation of the chair at the location: first row middle"
+          ]
+        },
+        {
+          "Param_ID": 3,
+          "Param_Type": "uint8_t",
+          "Param_Name": "First_Row_Right",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=OCCUPIED, 2=NOT_OCCUPIED",
+            "Description: Describes the occupation of the chair at the location: first row right"
+          ]
+        },
+        {
+          "Param_ID": 4,
+          "Param_Type": "uint8_t",
+          "Param_Name": "Second_Row_Left",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=OCCUPIED, 2=NOT_OCCUPIED",
+            "Description: Describes the occupation of the chair at the location: second row left"
+          ]
+        },
+        {
+          "Param_ID": 5,
+          "Param_Type": "uint8_t",
+          "Param_Name": "Second_Row_Middle",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=OCCUPIED, 2=NOT_OCCUPIED",
+            "Description: Describes the occupation of the chair at the location: second row middle"
+          ]
+        },
+        {
+          "Param_ID": 6,
+          "Param_Type": "uint8_t",
+          "Param_Name": "Second_Row_Right",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=OCCUPIED, 2=NOT_OCCUPIED",
+            "Description: Describes the occupation of the chair at the location: second row right"
+          ]
+        },
+        {
+          "Param_ID": 7,
+          "Param_Type": "uint8_t",
+          "Param_Name": "Third_Row_Left",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=OCCUPIED, 2=NOT_OCCUPIED",
+            "Description: Describes the occupation of the chair at the location: third row left"
+          ]
+        },
+        {
+          "Param_ID": 8,
+          "Param_Type": "uint8_t",
+          "Param_Name": "Third_Row_Middle",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=OCCUPIED, 2=NOT_OCCUPIED",
+            "Description: Describes the occupation of the chair at the location: third row middle"
+          ]
+        },
+        {
+          "Param_ID": 9,
+          "Param_Type": "uint8_t",
+          "Param_Name": "Third_Row_Right",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=INVALID, 1=OCCUPIED, 2=NOT_OCCUPIED",
+            "Description: Describes the occupation of the chair at the location: third row right"
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onUpdateRoadType",
+      "Msg_Description": [
+        "Interval: OnChange",
+        "Document Name: MOD_RQ_Sub-Interface-VAL-Enabler_Filter_EmergencyCall.xlsx",
+        "Object ID: MOD_RQ_SI_V_EC_468",
+        "Description: Determined road type from navigation system."
+      ],
+      "Msg_ID": 112,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "RoadType",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=OFF_ROAD, 1=RURAL_ROAD, 2=PROVINCIAL_ROAD, 3=MAJOR_ROAD, 4=NATIONAL_CLASS_ROAD, 5=MOTORWAY, 6=INVALID"
+          ]
+        }
+      ]
+    }
+  ]
+}

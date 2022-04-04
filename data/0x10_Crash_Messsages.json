@@ -1,0 +1,407 @@
+{
+  "Interface_Version": "0.7",
+  "FrameWork_OR_Thread": "FRAMEWORK",
+  "Interface_Name": "Crash_Messsages",
+  "Interface_Description": "This is the interface for exchanging crash related messages between NAD & CMP",
+  "Interface_Channel": 16,
+  "Interface_Messages": [
+    {
+      "Msg_Name": "onCrashData",
+      "Msg_Description": [
+        "Interval: onChange",
+        "Document Name: MLBevo_Gen2_MLBevo_CCAN_KMatrix_Module_V8.13.00F_20161110_FB.xlsx",
+        "Object ID: NA",
+        "Description: Inform the NAD about the crash data, the data can be retrieved from the PWM signal and CAN bus simulatanously."
+      ],
+      "Msg_ID": 100,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "crashIntensity",
+          "Param_Description": [
+            "Signal: AB_Crash_Int",
+            "Unit: Enum",
+            "Range: 0=kein_Crash, 1=Crash_Intensitaet_1, 2=Crash_Intensitaet_2_(nur_Stellgliedtest_MLB_B8), 3=Crash_Intensitaet_2_(nur_D4_C7_Colorado_NF_PAG__Crash_im_MLB_B8), 4=Crash_Intensitaet_3_(alt_VW/AUDI__Stellgliedtest_MLB_B8), 5=Crash_Intensitaet_3_(alt_PAG), 7=Crash_Intensitaet_3",
+            "Description: Crash intensity The VAL needs a value in the range 0-100, but the ESR eCall lib needs the 0-7 values."
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint8_t",
+          "Param_Name": "crashOccurrence",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: BitFields",
+            "Range: NA",
+            "Description: Information on crash data i.e. front/left/right/rear/rollover."
+          ],
+          "Param_bit_values": [
+            {
+              "Bit_Index": 0,
+              "Bit_Description": [
+                "Signal: AB_Front_Crash",
+                "Unit: NA",
+                "Range: NA",
+                "Description: Front crash shall signal any detected crash within the vehicles front area"
+              ]
+            },
+            {
+              "Bit_Index": 1,
+              "Bit_Description": [
+                "Signal: AB_SF_Crash",
+                "Unit: NA",
+                "Range: NA",
+                "Description: Left crash shall signal any detected crash within the vehicles left area"
+              ]
+            },
+            {
+              "Bit_Index": 2,
+              "Bit_Description": [
+                "Signal: AB_SB_Crash",
+                "Unit: NA",
+                "Range: NA",
+                "Description: Right crash shall signal any detected crash within the vehicles right area"
+              ]
+            },
+            {
+              "Bit_Index": 3,
+              "Bit_Description": [
+                "Signal: AB_Heck_Crash",
+                "Unit: NA",
+                "Range: NA",
+                "Description: Rear crash shall signal any detected crash within the vehicles rear area"
+              ]
+            },
+            {
+              "Bit_Index": 4,
+              "Bit_Description": [
+                "Signal: AB_Rollover_Crash",
+                "Unit: NA",
+                "Range: NA",
+                "Description: Rollover shall signal any detected rollover"
+              ]
+            }
+          ]
+        },
+        {
+          "Param_ID": 3,
+          "Param_Type": "uint8_t",
+          "Param_Name": "signalStatus",
+          "Param_Description": [ "Bit fields for status of the signal" ],
+          "Param_bit_values": [
+            {
+              "Bit_Index": 0,
+              "Bit_Description": [
+                "Signal: NA",
+                "Unit: 1-bit",
+                "Range: 0=CAN signal is not available, 1=CAN signal is available",
+                "Description: The signal is valid wehn crash intensity and occurrence is received at the CAN bus. The signal is not available when the Airbag_01 is not received anymore for more then 200ms."
+              ]
+            },
+            {
+              "Bit_Index": 1,
+              "Bit_Description": [
+                "Signal: AB_Systemfehler",
+                "Unit: 1-bit",
+                "Range: NA",
+                "Description: Error"
+              ]
+            },
+            {
+              "Bit_Index": 2,
+              "Bit_Description": [
+                "Signal: AB_Diagnose",
+                "Unit: 1-bit",
+                "Range: 0=No diagnose active, 1=Diagnose is active",
+                "Description: Diagnose active"
+              ]
+            },
+            {
+              "Bit_Index": 3,
+              "Bit_Description": [
+                "Signal: AB_Stellgliedtest",
+                "Unit: 1-bit",
+                "Range: 0=No Stellgieldtest active, 1=Stellgieldtest is active",
+                "Description: Stellgieldtest is active"
+              ]
+            },
+            {
+              "Bit_Index": 4,
+              "Bit_Description": [
+                "Signal: AB_Anzeige_Fussg",
+                "Unit: 2-bits",
+                "Range: 0=keine_FSG_Aktion_ausgeloest, 1=Motorhaube_offen, 2=Systemfehler",
+                "Description: ???"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onCrashData_PWMSignal",
+      "Msg_Description": [
+        "Interval: onChange",
+        "Document Name: VW80105-9.3_2016-06_de.pdf",
+        "Object ID: VW 80105-9.3 (Ausgabe 2016-06)",
+        "Description: The status of the Airbag-PWM Signal"
+      ],
+      "Msg_ID": 101,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "crashIntensity",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=NoCrash, 1=CrashLevel-1, 2=CrashLevel-2, 3=CrashLevel-3",
+            "Description: The crash intensity measured at the external PWM signal."
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint8_t",
+          "Param_Name": "signalStatus",
+          "Param_Description": [ "Bit fields for status of the signal" ],
+          "Param_bit_values": [
+            {
+              "Bit_Index": 0,
+              "Bit_Description": [
+                "Signal: NA",
+                "Unit: 1-bit",
+                "Range: 0=External PWM signal is invalid, 1=External PWM signal is valid",
+                "Description: The signal is valid when a valid PWM signal (within the tolerances) is received. The signal is not valid when the PWM signal is not within the tolerances anymore for more then 5000ms."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "Airbag_02",
+      "Msg_Description": [
+        "Interval: onChange",
+        "Document Name: NA",
+        "Object ID: NA",
+        "Description: Status of the eCall of Airbag ECU"
+      ],
+      "Msg_ID": 102,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "AB_Anforderung_eCall",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=No eCall active, 1=Active eCall"
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "EA_01",
+      "Msg_Description": [
+        "Interval: onChange",
+        "Document Name: NA",
+        "Object ID: NA",
+        "Description: Status of the eCall of driver assistant"
+      ],
+      "Msg_ID": 103,
+      "Msg_Direction": "CMP2NAD",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "EA_eCall_Anf",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=No eCall active, 1=Active eCall"
+          ]
+        }
+      ]
+    },
+    {
+      "Msg_Name": "onCrashData_PWMSignal_Ack",
+      "Msg_Description": [
+        "Interval: Response to onCrashData_PWMSignal",
+        "Document Name: VW80105-9.3_2016-06_de.pdf",
+        "Object ID: VW 80105-9.3 (Ausgabe 2016-06)",
+        "Description: Acknowledge by the NAD to indicate correct reception of the PWM signal."
+      ],
+      "Msg_ID": 104,
+      "Msg_Direction": "NAD2CMP",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "crashIntensity",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: Enum",
+            "Range: 0=NoCrash, 1=CrashLevel-1, 2=CrashLevel-2, 3=CrashLevel-3",
+            "Description: Echo the value received via onCrashData_PWMSignal (ID 101)."
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint8_t",
+          "Param_Name": "signalStatus",
+          "Param_Description": [ "Bit fields for status of the signal" ],
+          "Param_bit_values": [
+            {
+              "Bit_Index": 0,
+              "Bit_Description": [
+                "Signal: NA",
+                "Unit: 1-bit",
+                "Range: 0=External PWM signal is invalid, 1=External PWM signal is valid",
+                "Description: Echo the value received via onCrashData_PWMSignal (ID 101)."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+	{
+      "Msg_Name": "onCrashData_Ack",
+      "Msg_Description": [
+        "Interval: Response to onCrashData",
+        "Document Name: MLBevo_Gen2_MLBevo_CCAN_KMatrix_Module_V8.13.00F_20161110_FB.xlsx",
+        "Object ID: NA",
+        "Description: Acknowledge by the NAD to indicate correct reception of onCrashData."
+      ],
+      "Msg_ID": 105,
+      "Msg_Direction": "NAD2CMP",
+      "Msg_Parameters": [
+        {
+          "Param_ID": 1,
+          "Param_Type": "uint8_t",
+          "Param_Name": "crashIntensity",
+          "Param_Description": [
+            "Signal: AB_Crash_Int",
+            "Unit: Enum",
+            "Range: 0=kein_Crash, 1=Crash_Intensitaet_1, 2=Crash_Intensitaet_2_(nur_Stellgliedtest_MLB_B8), 3=Crash_Intensitaet_2_(nur_D4_C7_Colorado_NF_PAG__Crash_im_MLB_B8), 4=Crash_Intensitaet_3_(alt_VW/AUDI__Stellgliedtest_MLB_B8), 5=Crash_Intensitaet_3_(alt_PAG), 7=Crash_Intensitaet_3",
+            "Description: Echo the information received via onCrashData (ID 100)."
+          ]
+        },
+        {
+          "Param_ID": 2,
+          "Param_Type": "uint8_t",
+          "Param_Name": "crashOccurrence",
+          "Param_Description": [
+            "Signal: NA",
+            "Unit: BitFields",
+            "Range: NA",
+            "Description: Echo the information received via onCrashData (ID 100)."
+          ],
+          "Param_bit_values": [
+            {
+              "Bit_Index": 0,
+              "Bit_Description": [
+                "Signal: AB_Front_Crash",
+                "Unit: NA",
+                "Range: NA",
+				"Description: Echo the information received via onCrashData (ID 100)."
+              ]
+            },
+            {
+              "Bit_Index": 1,
+              "Bit_Description": [
+                "Signal: AB_SF_Crash",
+                "Unit: NA",
+                "Range: NA",
+				"Description: Echo the information received via onCrashData (ID 100)."
+              ]
+            },
+            {
+              "Bit_Index": 2,
+              "Bit_Description": [
+                "Signal: AB_SB_Crash",
+                "Unit: NA",
+                "Range: NA",
+				"Description: Echo the information received via onCrashData (ID 100)."
+              ]
+            },
+            {
+              "Bit_Index": 3,
+              "Bit_Description": [
+                "Signal: AB_Heck_Crash",
+                "Unit: NA",
+                "Range: NA",
+				"Description: Echo the information received via onCrashData (ID 100)."
+              ]
+            },
+            {
+              "Bit_Index": 4,
+              "Bit_Description": [
+                "Signal: AB_Rollover_Crash",
+                "Unit: NA",
+                "Range: NA",
+				"Description: Echo the information received via onCrashData (ID 100)."
+              ]
+            }
+          ]
+        },
+        {
+          "Param_ID": 3,
+          "Param_Type": "uint8_t",
+          "Param_Name": "signalStatus",
+          "Param_Description": [ "Bit fields for status of the signal" ],
+          "Param_bit_values": [
+            {
+              "Bit_Index": 0,
+              "Bit_Description": [
+                "Signal: NA",
+                "Unit: 1-bit",
+                "Range: 0=CAN signal is not available, 1=CAN signal is available",
+				"Description: Echo the information received via onCrashData (ID 100)."
+              ]
+            },
+            {
+              "Bit_Index": 1,
+              "Bit_Description": [
+                "Signal: AB_Systemfehler",
+                "Unit: 1-bit",
+                "Range: NA",
+                "Description: Error"
+              ]
+            },
+            {
+              "Bit_Index": 2,
+              "Bit_Description": [
+                "Signal: AB_Diagnose",
+                "Unit: 1-bit",
+                "Range: 0=No diagnose active, 1=Diagnose is active",
+                "Description: Diagnose active"
+              ]
+            },
+            {
+              "Bit_Index": 3,
+              "Bit_Description": [
+                "Signal: AB_Stellgliedtest",
+                "Unit: 1-bit",
+                "Range: 0=No Stellgieldtest active, 1=Stellgieldtest is active",
+                "Description: Stellgieldtest is active"
+              ]
+            },
+            {
+              "Bit_Index": 4,
+              "Bit_Description": [
+                "Signal: AB_Anzeige_Fussg",
+                "Unit: 2-bits",
+                "Range: 0=keine_FSG_Aktion_ausgeloest, 1=Motorhaube_offen, 2=Systemfehler",
+                "Description: ???"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
