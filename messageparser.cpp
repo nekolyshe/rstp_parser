@@ -56,9 +56,7 @@ ParsedMessageBase::ParsedMessageBase(const QByteArray &rawData) : mRawData(rawDa
         break;
     }
 
-    (void)0;
-
-        //get crc
+    AddItemsCrc();
 }
 
 ParsedMessageBase::~ParsedMessageBase()
@@ -243,7 +241,7 @@ void ParsedMessageBase::AddItemFrameType()
 
     if (pItem) {
         FrameType frameType = static_cast<FrameType>(GetItemData(TYPE_FRAME_TYPE).toHex().toInt(nullptr, 16));
-        pItem->item.name = QString("Frame Types (") + frameNames[frameType] + ")";
+        pItem->item.name = QString("Frame Type: ") + frameNames[frameType];
         pItem->item.description = QString("0x00 INIT Init frame with boot parameters"
                                           "0x01 INIT_ACK Acknowledge for init frame"
                                           "0x02 CHRST Reset Channel Sequence Numbers"
@@ -274,7 +272,7 @@ void ParsedMessageBase::AddItemLen()
     ItemTyped *pItem = AddIndexedItem(TYPE_LENGHT);
 
     if (pItem) {
-        pItem->item.name = QString("Data lenght");
+        pItem->item.name = QString("Data lenght: ") + QString::number(GetItemData(TYPE_LENGHT).toHex().toInt(nullptr, 16));
     }
 }
 
@@ -283,7 +281,7 @@ void ParsedMessageBase::AddItemChannel()
     ItemTyped *pItem = AddIndexedItem(TYPE_CHANNEL);
     QJsonObject channel= getChannelDescriptions()[GetItemData(TYPE_CHANNEL).toHex().toInt(nullptr, 16)];
 
-    pItem->item.name = QString("Channel id");
+    pItem->item.name = QString("Channel id: ") + QString::number(GetItemData(TYPE_CHANNEL).toHex().toInt(nullptr, 16));
 
     if (pItem && !channel.empty()) {
         pItem->item.name += " :" + channel["Interface_Name"].toString();
@@ -298,7 +296,7 @@ void ParsedMessageBase::AddItemSeqNum()
     ItemTyped *pItem = AddIndexedItem(TYPE_SEQ_NUM);
 
     if (pItem) {
-        pItem->item.name = QString("Sequence Number");
+        pItem->item.name = QString("Sequence Number: ") + QString::number(GetItemData(TYPE_SEQ_NUM).toHex().toInt(nullptr, 16));
     }
 }
 
@@ -358,12 +356,13 @@ void ParsedMessageBase::AddItemMsgId()
 
     QJsonValue msg = GetMessageDescriptionJson(messageId, channelId);
 
-    pItem->item.name = "Message id";
+    if (pItem != nullptr) {
+        pItem->item.name = QString("Message id: ") + QString::number(messageId);
 
-    if (pItem != nullptr && !msg.isNull()) {
-        pItem->item.name += ": " + getTextFromJsonValue(msg["Msg_Name"]);
-        pItem->item.description = getTextFromJsonValue(msg["Msg_Description"]);
-    } else {
+        if (!msg.isNull()) {
+            pItem->item.name += getTextFromJsonValue(msg["Msg_Name"]);
+            pItem->item.description = getTextFromJsonValue(msg["Msg_Description"]);
+        }
     }
 }
 
@@ -372,17 +371,18 @@ void ParsedMessageBase::AddItemMsgLen()
     const int kBitsToShift = 6;
     const int kLenSizeBitMask = 0x03;
     const int kIndex = GetItemIndex(TYPE_MSG_LEN);
+    uint8_t lenSize = 0;
 
     ItemTyped *pItem = nullptr;
 
     if (kIndex < mRawData.size() && kIndex >= 0) {
-        const uint8_t lenSize = (mRawData[kIndex] >> kBitsToShift) & kLenSizeBitMask;
+        lenSize = (mRawData[kIndex] >> kBitsToShift) & kLenSizeBitMask;
 
         pItem = AddIndexedItem(TYPE_MSG_LEN, lenSize + 1); // 00 means 1 byte
     }
 
     if (pItem) {
-        pItem->item.name = QString("Message lenght");
+        pItem->item.name = QString("Message lenght: ") + QString::number( GetItemData(TYPE_MSG_LEN).toHex().toInt(nullptr, 16));
     }
 }
 
@@ -408,13 +408,8 @@ void ParsedMessageBase::AddItemsPayload()
     int channelId = GetItemData(TYPE_CHANNEL).toHex().toInt(nullptr, 16);
     int messageId = GetItemData(TYPE_MSG_ID).toHex().toInt(nullptr, 16);
 
-    if (channelId == 0x40 && messageId == 110)
-    {
-        channelId = 0x40;
-    }
-
     int payloadIndex = GetItemIndex(TYPE_MSG_LEN) + GetItem(TYPE_MSG_LEN).size;
-    int payloadSize = GetItemData(TYPE_LENGHT).toHex().toInt()
+    int payloadSize = GetItemData(TYPE_LENGHT).toHex().toInt(nullptr, 16)
             - GetItem(TYPE_CHANNEL).size
             - GetItem(TYPE_SEQ_NUM).size
             - GetItem(TYPE_MSG_ID).size
@@ -476,7 +471,7 @@ void ParsedMessageBase::AddItemsPayload()
 void ParsedMessageBase::AddItemsCrc()
 {
     const int kCrcSize = sizeof (uint16_t);
-    const int kIndex = GetItemIndex(TYPE_MSG_LEN) + GetItemData(TYPE_MSG_LEN).toHex().toInt(nullptr, 16);
+    const int kIndex = GetItemIndex(TYPE_LENGHT) + GetItem(TYPE_LENGHT).size + GetItemData(TYPE_LENGHT).toHex().toInt(nullptr, 16);
 
     ItemTyped *pItem = AddItem(kIndex, kCrcSize, TYPE_CRC);
 
@@ -536,12 +531,11 @@ int ParsedMessageBase::GetPayloadParamOffSet(int index)
 ParsedMessageBase::Isvalid ParsedMessageBase::IsItemValid(int index, int size) const
 {
     Isvalid valid = EMPTY;
-    if (index < mRawData.size() && index >= 0) {
-        if (index + size < mRawData.size()) {
-            valid = VALID;
-        } else {
-            valid = NOT_VALID;
-        }
+    if (index + size <= mRawData.size() && index >= 0 && size > 0) {
+        valid = VALID;
+    } else {
+        valid = NOT_VALID;
     }
+
     return valid;
 }
