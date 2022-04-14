@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>876</width>
-    <height>375</height>
+    <width>925</width>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,6 @@
        <property name="font">
         <font>
          <pointsize>20</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -103,7 +102,7 @@
       <enum>QAbstractItemView::SingleSelection</enum>
      </property>
      <property name="selectionBehavior">
-      <enum>QAbstractItemView::SelectColumns</enum>
+      <enum>QAbstractItemView::SelectRows</enum>
      </property>
      <property name="showGrid">
       <bool>false</bool>
@@ -121,39 +120,40 @@
       <bool>true</bool>
      </property>
      <property name="rowCount">
-      <number>2</number>
+      <number>0</number>
      </property>
      <property name="columnCount">
-      <number>0</number>
+      <number>3</number>
      </property>
      <attribute name="horizontalHeaderMinimumSectionSize">
       <number>40</number>
      </attribute>
      <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>200</number>
+      <number>400</number>
      </attribute>
      <attribute name="horizontalHeaderStretchLastSection">
-      <bool>false</bool>
+      <bool>true</bool>
      </attribute>
      <attribute name="verticalHeaderCascadingSectionResizes">
       <bool>false</bool>
      </attribute>
      <attribute name="verticalHeaderDefaultSectionSize">
-      <number>50</number>
+      <number>80</number>
      </attribute>
      <attribute name="verticalHeaderStretchLastSection">
-      <bool>true</bool>
+      <bool>false</bool>
      </attribute>
-     <row>
+     <column>
       <property name="text">
-       <string>Name</string>
+       <string>Field name</string>
       </property>
-     </row>
-     <row>
+     </column>
+     <column>
       <property name="text">
-       <string>Description</string>
+       <string>Field description</string>
       </property>
-     </row>
+     </column>
+     <column/>
     </widget>
    </item>
   </layout>

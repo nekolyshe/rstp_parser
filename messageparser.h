@@ -76,6 +76,14 @@ private:
         FT_NACK        = 0x12,// Data No acknowledge
     };
 
+    enum PayloadItemType {
+        IT_FIXED_8     = 0x00,
+        IT_FIXED_16    = 0x01,
+        IT_FIXED_32    = 0x02,
+        IT_FIXED_64    = 0x03,
+        IT_NOT_FIXED   = 0x04
+    };
+
     struct ItemTyped {
         ItemType type;
         Item item;
@@ -103,6 +111,7 @@ private:
     void AddItemsCrc();
 
     int GetPayloadParamSize(int index);
+    int GetPayloadParamOffSet(int index);
 
     Isvalid IsItemValid(int index, int size) const;
 

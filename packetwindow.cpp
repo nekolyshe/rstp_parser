@@ -31,16 +31,16 @@ void packetWindow::AddWindowData(const ParsedMessageBase::Parsed &info, const QB
     mRawData = rawData;
     mInfo = info;
 
-    unsigned int column = 0;
+    unsigned int row = 0;
 
-    ui->twData->setColumnCount(column);
+    ui->twData->setRowCount(row);
 
     for(const auto &item : info) {
-        ui->twData->insertColumn(column);
+        ui->twData->insertRow(row);
 
-        ui->twData->setItem(ROW_NAME, column, new QTableWidgetItem(item->name));
-        ui->twData->setItem(ROW_DESCRIPTION, column, new QTableWidgetItem(item->description));
-        column++;
+        ui->twData->setItem(row, ROW_NAME, new QTableWidgetItem(item->name));
+        ui->twData->setItem(row, ROW_DESCRIPTION, new QTableWidgetItem(item->description));
+        row++;
     }
 
     AddTextData(0,0);
@@ -60,7 +60,7 @@ void packetWindow::on_tableWidget_cellClicked(int row, int column)
 
 void packetWindow::on_twData_cellClicked(int row, int column)
 {
-    (void)row;
-    AddTextData(mInfo[column]->index, mInfo[column]->size);
+    (void)column;
+    AddTextData(mInfo[row]->index, mInfo[row]->size);
 }
 

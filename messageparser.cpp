@@ -408,8 +408,13 @@ void ParsedMessageBase::AddItemsPayload()
     int channelId = GetItemData(TYPE_CHANNEL).toHex().toInt(nullptr, 16);
     int messageId = GetItemData(TYPE_MSG_ID).toHex().toInt(nullptr, 16);
 
+    if (channelId == 0x40 && messageId == 110)
+    {
+        channelId = 0x40;
+    }
+
     int payloadIndex = GetItemIndex(TYPE_MSG_LEN) + GetItem(TYPE_MSG_LEN).size;
-    int payloadSize = GetItemData(TYPE_LENGHT).toHex().toInt(nullptr, 16)
+    int payloadSize = GetItemData(TYPE_LENGHT).toHex().toInt()
             - GetItem(TYPE_CHANNEL).size
             - GetItem(TYPE_SEQ_NUM).size
             - GetItem(TYPE_MSG_ID).size
@@ -439,12 +444,23 @@ void ParsedMessageBase::AddItemsPayload()
         }
 
         if (hasDescription && pItem != nullptr) {
-            int itemId = GetItemData(TYPE_MSG_ID).toHex().toInt(nullptr, 16) >> kBytesToShift;
+            int itemId = mRawData[pItem->item.index] >> kBytesToShift;
             int i = 0;
 
             while (msgObj[i] != QJsonValue::Undefined) {
                 if (itemId == (msgObj[i])["Param_ID"].toInt()) {
-                    pItem->item.name += " :" + getTextFromJsonValue((msgObj[i])["Param_Name"]);
+                    int payloadParamOffSet = GetPayloadParamOffSet(payloadIndex);
+                    QByteArray itemRawData = mRawData.mid(i + payloadIndex + payloadParamOffSet, pItem->item.size - payloadParamOffSet);
+
+                    pItem->item.name += " : Id = " + QString::number(itemId) + " (" + getTextFromJsonValue((msgObj[i])["Param_Name"]) + ")\n";
+                    pItem->item.name += "Data : \n";
+
+                    for (const auto &i: itemRawData) {
+                        pItem->item.name += QString("%1 ").arg(i, 2, 16, QLatin1Char( '0' ));
+                    }
+
+                    pItem->item.name += QString("\n (") + itemRawData + QString(")");
+
                     pItem->item.description = getTextFromJsonValue((msgObj[i])["Param_Description"]);
                     break;
                 }
@@ -472,11 +488,11 @@ void ParsedMessageBase::AddItemsCrc()
 int ParsedMessageBase::GetPayloadParamSize(int index)
 {
     static const QMap<int, int> frameSizes = {
-        {0x00, 2},   //Fixed 8 Bit Fixed types of 8 bit size (uint8, int8, bool, char)
-        {0x01, 3},   //Fixed 16 Bit Fixed types of 16 bit size (uint16, int16)
-        {0x02, 5},   //Fixed32 Bit Fixed types of 32 bit size (uint32, int32, float)
-        {0x03, 9},   //Fixed 64 Bit Fixed types of 64 bit size (uint64, int64, double)
-        {0x04, 0},   //Length-delimited String, arrays, structures, sub messages
+        {IT_FIXED_8,   2}, //Fixed 8 Bit Fixed types of 8 bit size (uint8, int8, bool, char)
+        {IT_FIXED_16,  3}, //Fixed 16 Bit Fixed types of 16 bit size (uint16, int16)
+        {IT_FIXED_32,  5}, //Fixed32 Bit Fixed types of 32 bit size (uint32, int32, float)
+        {IT_FIXED_64,  9}, //Fixed 64 Bit Fixed types of 64 bit size (uint64, int64, double)
+        {IT_NOT_FIXED, 0}, //Length-delimited String, arrays, structures, sub messages
     };
 
     const int kSizeMask = 0x07;
@@ -495,6 +511,26 @@ int ParsedMessageBase::GetPayloadParamSize(int index)
     }
 
     return size;
+}
+
+int ParsedMessageBase::GetPayloadParamOffSet(int index)
+{
+    const int kSizeMask = 0x07;
+    const int offsetFixed = 0x01;
+    const int offsetNotFixed = 0x02;
+    int offset = 0;
+
+    if (IsItemValid(index, sizeof (uint8_t)) == VALID) {
+        int frameSizeType = mRawData[index] & kSizeMask;
+
+        if (frameSizeType == IT_NOT_FIXED) {
+            offset = offsetNotFixed;
+        } else {
+            offset = offsetFixed;
+        }
+    }
+
+    return offset;
 }
 
 ParsedMessageBase::Isvalid ParsedMessageBase::IsItemValid(int index, int size) const

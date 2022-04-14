@@ -57,9 +57,9 @@ void MainWindow::initSlots()
 
 void MainWindow::initFilterText()
 {
-    QRegExp rx ("[0-9A-Fa-f ]+");
-    ui->leFilterChannels->setValidator (new QRegExpValidator (rx, this));
-    ui->leFilterMsgId->setValidator (new QRegExpValidator (rx, this));
+    QRegularExpression rx ("[0-9A-Fa-f ]+");
+    ui->leFilterChannels->setValidator (new QRegularExpressionValidator (rx, this));
+    ui->leFilterMsgId->setValidator (new QRegularExpressionValidator (rx, this));
 }
 
 void MainWindow::UpdateCheckBoxes()
@@ -224,8 +224,8 @@ void MainWindow::on_checkBox_payload_stateChanged(int arg1)
 
 void MainWindow::on_pbAdjustFilter_clicked()
 {
-    mMsgFilter = ui->leFilterMsgId->text().split(" ", QString::SkipEmptyParts);
-    mChannelFilter = ui->leFilterChannels->text().split(" ", QString::SkipEmptyParts);
+    mMsgFilter = ui->leFilterMsgId->text().split(" ", Qt::SkipEmptyParts);
+    mChannelFilter = ui->leFilterChannels->text().split(" ", Qt::SkipEmptyParts);
 
     UpdateListview();
 }
@@ -234,7 +234,8 @@ void MainWindow::on_twMessages_cellDoubleClicked(int row, int column)
 {
     (void)column;
 
-    mPacketWindow->AddWindowData(mMessage[row].msg.getDescriptions(), mMessage[row].msg.GetRawData());
+    int position = ui->twMessages->item(row, COLUMN_NUM)->text().toInt() - 1;
+    mPacketWindow->AddWindowData(mMessage[position].msg.getDescriptions(), mMessage[position].msg.GetRawData());
     mPacketWindow->show();
 }
 

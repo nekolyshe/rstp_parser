@@ -1,7 +1,9 @@
 #include "rstpdata.h"
 
 #include <QFile>
+#include <QString>
 #include <QTextStream>
+#include <QRegularExpression>
 
 RstpData::RstpData()
 {
@@ -26,7 +28,7 @@ static uint32_t myToInt(QString& strValue) {//TODO: rename
 
 static void StringToU8(const QString &str, QByteArray &payload)
 {
-    QStringList listValues = str.split(QRegExp("[^0-9A-F]"), QString::SkipEmptyParts);
+    QStringList listValues = str.split(QRegularExpression ("[^0-9A-F]"), Qt::SkipEmptyParts);
 
     payload.clear();
 
@@ -37,8 +39,8 @@ static void StringToU8(const QString &str, QByteArray &payload)
 
 static void ParceTimestamp(const QString &timestamp, QTime &timeDate)
 {
-    QStringList listValues = timestamp.split(QRegExp("[^0-9]"), QString::SkipEmptyParts);
-    QStringList listNames = timestamp.split(QRegExp("[^A-zµ]"), QString::SkipEmptyParts);
+    QStringList listValues = timestamp.split(QRegularExpression("[^0-9]"), Qt::SkipEmptyParts);
+    QStringList listNames = timestamp.split(QRegularExpression("[^A-zµ]"), Qt::SkipEmptyParts);
 
     int hour    = 0,
         min     = 0,
@@ -79,7 +81,7 @@ void RstpData::GetFromFile(const QString &filename)
      QTextStream in(&file);
      while (!in.atEnd()) {
          QString line = in.readLine();
-         QStringList list = line.split(QLatin1Char(','), QString::SkipEmptyParts); //TODO: check results
+         QStringList list = line.split(QLatin1Char(','), Qt::SkipEmptyParts); //TODO: check results
          ParceTimestamp(list[TIMESTAMP_INDEX], rstpPacket.timestamp);
          StringToU8(list[PAYLOAD_INDEX], rstpPacket.data);
 
