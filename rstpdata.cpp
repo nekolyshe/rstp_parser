@@ -4,6 +4,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QRegularExpression>
+#include <QElapsedTimer>
 
 RstpData::RstpData()
 {
@@ -72,23 +73,44 @@ void RstpData::GetFromFile(const QString &filename)
     ClearList();
 
     QFile file(filename);
-     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-         return;
-     }
 
-     RstpPacket rstpPacket;
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return;
+    }
 
-     QTextStream in(&file);
-     while (!in.atEnd()) {
-         QString line = in.readLine();
-         QStringList list = line.split(QLatin1Char(','), Qt::SkipEmptyParts); //TODO: check results
-         ParceTimestamp(list[TIMESTAMP_INDEX], rstpPacket.timestamp);
-         StringToU8(list[PAYLOAD_INDEX], rstpPacket.data);
+    RstpPacket rstpPacket;
 
-         AddItemToList(rstpPacket);
-     }
+    QElapsedTimer timer;
 
-     emit ListUpdated(mRstpDataList);
+    timer.start();
+    qDebug()<< "read file start " << QTime::currentTime();
+
+//    QString allFile = file.readAll();
+//    QStringList allLines = allFile.split("\n", Qt::SkipEmptyParts);
+
+//    for(auto &line : allLines) {
+//        QStringList list = line.split(QLatin1Char(','), Qt::SkipEmptyParts); //TODO: check results
+//        ParceTimestamp(list[TIMESTAMP_INDEX], rstpPacket.timestamp);
+//        StringToU8(list[PAYLOAD_INDEX], rstpPacket.data);
+
+//        AddItemToList(rstpPacket);
+//    }
+
+    QTextStream in(&file);
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        QStringList list = line.split(QLatin1Char(','), Qt::SkipEmptyParts); //TODO: check results
+        ParceTimestamp(list[TIMESTAMP_INDEX], rstpPacket.timestamp);
+        StringToU8(list[PAYLOAD_INDEX], rstpPacket.data);
+
+        AddItemToList(rstpPacket);
+    }
+
+    qDebug()<< "read file end " << QTime::currentTime();
+    qDebug()<< "total " << timer.elapsed();
+    file.close();
+    emit ListUpdated(mRstpDataList);
 }
 
 void RstpData::AddItemToList(RstpPacket &packet)

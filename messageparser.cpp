@@ -360,7 +360,7 @@ void ParsedMessageBase::AddItemMsgId()
         pItem->item.name = QString("Message id: ") + QString::number(messageId);
 
         if (!msg.isNull()) {
-            pItem->item.name += getTextFromJsonValue(msg["Msg_Name"]);
+            pItem->item.name += " (" + getTextFromJsonValue(msg["Msg_Name"]) + ")";
             pItem->item.description = getTextFromJsonValue(msg["Msg_Description"]);
         }
     }
@@ -434,18 +434,26 @@ void ParsedMessageBase::AddItemsPayload()
             break;
         }
 
-        if (pItem != nullptr) {
-            pItem->item.name = "Payload";
+        if (pItem == nullptr) {
+            qDebug() << "Can't create item";
+            break;
         }
 
-        if (hasDescription && pItem != nullptr) {
+        if (pItem->item.isvalid == NOT_VALID) {
+            pItem->item.name = "Payload: brocken item";
+            break;
+        }
+
+        pItem->item.name = "Payload";
+
+        if (hasDescription) {
             int itemId = mRawData[pItem->item.index] >> kBytesToShift;
             int i = 0;
 
             while (msgObj[i] != QJsonValue::Undefined) {
                 if (itemId == (msgObj[i])["Param_ID"].toInt()) {
                     int payloadParamOffSet = GetPayloadParamOffSet(payloadIndex);
-                    QByteArray itemRawData = mRawData.mid(i + payloadIndex + payloadParamOffSet, pItem->item.size - payloadParamOffSet);
+                    QByteArray itemRawData = mRawData.mid(pItem->item.index + payloadParamOffSet, pItem->item.size - payloadParamOffSet);
 
                     pItem->item.name += " : Id = " + QString::number(itemId) + " (" + getTextFromJsonValue((msgObj[i])["Param_Name"]) + ")\n";
                     pItem->item.name += "Data : \n";

@@ -34,7 +34,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pbOpenFile_clicked()
 {
+    qDebug()<< "on_pbOpenFile_clicked " << QTime::currentTime();
+
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open Log"), nullptr, "*.csv");
+    this->setWindowTitle(fileName);
     mRstpData->GetFromFile(fileName);
 }
 
@@ -42,12 +45,19 @@ void MainWindow::on_updateList(const RstpData::RstpDataList &dataList)
 {
     mMessage.clear();
 
+    qDebug()<< "Update dataList start " << QTime::currentTime();
     for(const auto &msg: dataList) {
         mMessage << Message(msg.data, msg.timestamp);
     }
+    qDebug()<< "Update dataList end " << QTime::currentTime();
 
+    qDebug()<< "UpdateListItems start " << QTime::currentTime();
     UpdateListItems();
+    qDebug()<< "UpdateListItems end " << QTime::currentTime();
+
+    qDebug()<< "UpdateListview start " << QTime::currentTime();
     UpdateListview();
+    qDebug()<< "UpdateListview end " << QTime::currentTime();
 }
 
 void MainWindow::initSlots()
@@ -101,6 +111,7 @@ void MainWindow::UpdateListItems()
 
     ui->twMessages->setRowCount(0);
 
+    setUpdatesEnabled(false);
     for (const auto &message : qAsConst(mMessage)) {
         ui->twMessages->insertRow(row);
 
@@ -116,6 +127,7 @@ void MainWindow::UpdateListItems()
 
         row++;
     }
+    setUpdatesEnabled(true);
 }
 
 void MainWindow::UpdateListview()
@@ -130,6 +142,7 @@ void MainWindow::UpdateListview()
 
     const unsigned int rows = ui->twMessages->rowCount();
 
+    setUpdatesEnabled(false);
     for (unsigned int i = 0; i < rows; i++) {
 
         bool showByMessageId = isFilteredPersist(ui->twMessages->item(i, COLUMN_MESSAGE_ID), mMsgFilter);
@@ -137,6 +150,7 @@ void MainWindow::UpdateListview()
 
         ui->twMessages->setRowHidden(i, !(showByChannel && showByMessageId));
     }
+    setUpdatesEnabled(true);
 }
 
 const QString MainWindow::EmptyValText() const
@@ -238,7 +252,6 @@ void MainWindow::on_twMessages_cellDoubleClicked(int row, int column)
     mPacketWindow->AddWindowData(mMessage[position].msg.getDescriptions(), mMessage[position].msg.GetRawData());
     mPacketWindow->show();
 }
-
 
 void MainWindow::on_twMessages_itemDoubleClicked(QTableWidgetItem *item)
 {
