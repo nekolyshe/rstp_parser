@@ -20,6 +20,12 @@ public:
         EMPTY
     };
 
+    enum Direcion {
+        RX = 0,
+        TX,
+        NONE
+    };
+
     struct Item {
         Item() : isvalid(EMPTY), index(INDEX_INVALID), size(0) {}
         Item(Isvalid isvalid, int index, int size) : isvalid(isvalid), index(index) , size(size){}
@@ -40,6 +46,7 @@ public:
     QByteArray GetChannelId() const;
     QByteArray GetSeqNum()    const;
     QByteArray GetMessageId() const;
+    QByteArray GetDirection() const;
     QByteArray GetRawData()   const;
     const Parsed getDescriptions();
 

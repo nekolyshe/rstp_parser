@@ -1,10 +1,13 @@
 #include "rstpdata.h"
+#include "qdebug.h"
 
 #include <QFile>
 #include <QString>
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QElapsedTimer>
+
+#define VALUE_EMPTY 0xFFFFFFFF
 
 RstpData::RstpData()
 {
@@ -23,7 +26,7 @@ static uint32_t myToInt(QString& strValue) {//TODO: rename
     if (succes) {
         return intValue;
     } else {
-        return 0;
+        return VALUE_EMPTY;
     }
 }
 
@@ -38,7 +41,7 @@ static void StringToU8(const QString &str, QByteArray &payload)
     }
 }
 
-static void ParceTimestamp(const QString &timestamp, QTime &timeDate)
+static void ParseTimestamp(const QString &timestamp, QTime &timeDate)
 {
     QStringList listValues = timestamp.split(QRegularExpression("[^0-9]"), Qt::SkipEmptyParts);
     QStringList listNames = timestamp.split(QRegularExpression("[^A-zµ]"), Qt::SkipEmptyParts);
@@ -67,7 +70,9 @@ void RstpData::GetFromFile(const QString &filename)
 {
     enum {
         TIMESTAMP_INDEX = 0,
-        PAYLOAD_INDEX = 1
+        PAYLOAD_INDEX   = 1,
+        DURATION_INDEX  = 2,
+        DIRECTION_INDEX = 3
     };
 
     ClearList();
@@ -79,30 +84,27 @@ void RstpData::GetFromFile(const QString &filename)
     }
 
     RstpPacket rstpPacket;
-
     QElapsedTimer timer;
 
     timer.start();
     qDebug()<< "read file start " << QTime::currentTime();
 
-//    QString allFile = file.readAll();
-//    QStringList allLines = allFile.split("\n", Qt::SkipEmptyParts);
-
-//    for(auto &line : allLines) {
-//        QStringList list = line.split(QLatin1Char(','), Qt::SkipEmptyParts); //TODO: check results
-//        ParceTimestamp(list[TIMESTAMP_INDEX], rstpPacket.timestamp);
-//        StringToU8(list[PAYLOAD_INDEX], rstpPacket.data);
-
-//        AddItemToList(rstpPacket);
-//    }
-
     QTextStream in(&file);
 
     while (!in.atEnd()) {
         QString line = in.readLine();
-        QStringList list = line.split(QLatin1Char(','), Qt::SkipEmptyParts); //TODO: check results
-        ParceTimestamp(list[TIMESTAMP_INDEX], rstpPacket.timestamp);
-        StringToU8(list[PAYLOAD_INDEX], rstpPacket.data);
+        QStringList list = line.split(QLatin1Char(','), Qt::SkipEmptyParts); // TODO: check results
+
+        if (list.count() > TIMESTAMP_INDEX) {
+            ParseTimestamp(list[TIMESTAMP_INDEX], rstpPacket.timestamp);
+        }
+        if (list.count() > PAYLOAD_INDEX) {
+            StringToU8(list[PAYLOAD_INDEX], rstpPacket.data);
+        }
+        if (list.count() > DIRECTION_INDEX) {
+            rstpPacket.diretion =
+                static_cast<uint8_t>(myToInt(list[DIRECTION_INDEX]));
+        }
 
         AddItemToList(rstpPacket);
     }

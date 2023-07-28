@@ -33,12 +33,18 @@ private slots:
 
     void on_pbAdjustFilter_clicked();
 
-    void on_twMessages_itemDoubleClicked(QTableWidgetItem *item);
-
     void on_twMessages_cellDoubleClicked(int row, int column);
 
-private:
+    void on_comboBox_currentIndexChanged(int index);
 
+    void on_checkBox_Direction_stateChanged(int arg1);
+
+private:
+    static const QString textRX;
+    static const QString textTX;
+    static const QString textEmpty;
+
+    bool mShowDirection;
     bool mShowSof;
     bool mShowFrameType;
     bool mShowLenght;
@@ -46,10 +52,13 @@ private:
     bool mShowSeqNum;
     bool mShowMessageId;
     bool mShowPayload;
+    bool mShowDirectionRx;
+    bool mShowDirectionTx;
 
     enum {
-        COLUMN_NUM,
+        COLUMN_NUM = 0,
         COLUMN_TIME_STAMP,
+        COLUMN_DIRECTION,
         COLUMN_SOF,
         COLUMN_FRAME_TYPE,
         COLUMN_LENGHT,
@@ -62,11 +71,24 @@ private:
     };
 
     struct Message {
-        Message(ParsedMessageBase msg, QTime time) : msg(msg), timestamp(time)
-        {}
+        Message(ParsedMessageBase msg, QTime time, std::uint8_t direction) : msg(msg), timestamp(time)
+        {
+            switch (direction) {
+            case 0:
+                this->direction = ParsedMessageBase::RX;
+                break;
+            case 1:
+                this->direction = ParsedMessageBase::TX;
+                break;
+            default:
+                this->direction = ParsedMessageBase::NONE;
+                break;
+            }
+        }
 
         ParsedMessageBase msg;
         QTime timestamp;
+        ParsedMessageBase::Direcion direction;
     };
 
     Ui::MainWindow *ui;
@@ -83,8 +105,6 @@ private:
     const QString ConvertMsgToText(const QByteArray &arr);
     void UpdateListItems();
     void UpdateListview();
-
-    const QString EmptyValText() const;
 
     bool isFilteredPersist(const QTableWidgetItem *item, const QStringList &filter);
 };

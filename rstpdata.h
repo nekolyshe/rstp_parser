@@ -16,6 +16,7 @@ public:
     struct RstpPacket {
         QTime timestamp;
         QByteArray data;
+        std::uint8_t diretion;
     };
 
     typedef QList<RstpPacket> RstpDataList;

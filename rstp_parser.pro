@@ -29,6 +29,7 @@ TRANSLATIONS += \
     rstp_parer_en_US.ts
 CONFIG += lrelease
 CONFIG += embed_translations
+CONFIG += static
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
