@@ -248,6 +248,7 @@ void MainWindow::on_twMessages_cellDoubleClicked(int row, int column)
 {
     (void)column;
 
+    mPacketWindow->close();
     int position = ui->twMessages->item(row, COLUMN_NUM)->text().toInt() - 1;
     mPacketWindow->AddWindowData(mMessage[position].msg.getDescriptions(), mMessage[position].msg.GetRawData());
     mPacketWindow->show();
