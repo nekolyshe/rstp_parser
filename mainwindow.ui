@@ -27,6 +27,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="pbOpenJsonFolder">
+          <property name="text">
+           <string>Set JSONS</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
            <string>Shown fields</string>

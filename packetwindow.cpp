@@ -53,11 +53,6 @@ void packetWindow::AddTextData(int selectedIndex, int selectedSize)
     ui->lbData3->setText(ConvertRawToText(mRawData.mid(selectedIndex + selectedSize)));
 }
 
-void packetWindow::on_tableWidget_cellClicked(int row, int column)
-{
-
-}
-
 void packetWindow::on_twData_cellClicked(int row, int column)
 {
     (void)column;

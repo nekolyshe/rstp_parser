@@ -39,6 +39,8 @@ private slots:
 
     void on_checkBox_Direction_stateChanged(int arg1);
 
+    void on_pbOpenJsonFolder_clicked();
+
 private:
     static const QString textRX;
     static const QString textTX;

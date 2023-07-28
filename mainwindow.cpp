@@ -26,8 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
     initFilterText();
 
     UpdateCheckBoxes();
-
-    ParsedMessageBase::AddDescriptions(qApp->applicationDirPath() + "/data/");
 }
 
 MainWindow::~MainWindow()
@@ -280,5 +278,13 @@ void MainWindow::on_checkBox_Direction_stateChanged(int arg1)
 {
     mShowDirection = (arg1 != 0);
     UpdateListview();
+}
+
+
+void MainWindow::on_pbOpenJsonFolder_clicked()
+{
+    QString folderName = QFileDialog::getExistingDirectory(); //this, tr("Open folder with JSONS"), nullptr, "*"
+    qDebug()<< "JSONS folder: " << folderName;
+    ParsedMessageBase::AddDescriptions(folderName + "/");
 }
 

@@ -20,8 +20,6 @@ public:
     void AddWindowData(const ParsedMessageBase::Parsed &info, const QByteArray &rawData);
     void AddTextData(int selectedIndex, int selectedSize);
 private slots:
-    void on_tableWidget_cellClicked(int row, int column);
-
 
     void on_twData_cellClicked(int row, int column);
 

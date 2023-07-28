@@ -116,6 +116,8 @@ bool ParsedMessageBase::AddDescriptions(QString descriptionFolder)
     QDir directory(descriptionFolder);
     QStringList files = directory.entryList(QStringList() << "*.json" << "*.JSON",QDir::Files);
 
+    getChannelDescriptions().clear();
+
     for(const QString &filename: files) {
 
         QFile file(descriptionFolder + filename);
