@@ -111,9 +111,15 @@ const ParsedMessageBase::Parsed ParsedMessageBase::getDescriptions()
     return  list;
 }
 
-bool ParsedMessageBase::AddDescriptions(QString descriptionFolder)
+ParsedMessageBase::AddDescriptionStatus ParsedMessageBase::AddDescriptions(QString descriptionFolder)
 {
     QDir directory(descriptionFolder);
+
+    if(!directory.exists())
+    {
+        return PATH_DOEST_EXIST;
+    }
+
     QStringList files = directory.entryList(QStringList() << "*.json" << "*.JSON",QDir::Files);
 
     getChannelDescriptions().clear();
@@ -138,7 +144,7 @@ bool ParsedMessageBase::AddDescriptions(QString descriptionFolder)
         }
     }
 
-    return true;
+    return OK;
 }
 
 const QByteArray ParsedMessageBase::GetItemData(ItemType type) const

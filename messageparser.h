@@ -26,6 +26,11 @@ public:
         NONE
     };
 
+    enum AddDescriptionStatus {
+        OK = 0,
+        PATH_DOEST_EXIST
+    };
+
     struct Item {
         Item() : isvalid(EMPTY), index(INDEX_INVALID), size(0) {}
         Item(Isvalid isvalid, int index, int size) : isvalid(isvalid), index(index) , size(size){}
@@ -50,7 +55,7 @@ public:
     QByteArray GetRawData()   const;
     const Parsed getDescriptions();
 
-    static bool AddDescriptions(QString descriptionFolder);
+    static AddDescriptionStatus AddDescriptions(QString descriptionFolder);
 
 private:
     enum ItemType {

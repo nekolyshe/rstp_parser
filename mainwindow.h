@@ -30,21 +30,17 @@ private slots:
     void on_checkBox_seqNum_stateChanged(int arg1);
     void on_checkBox_msgId_stateChanged(int arg1);
     void on_checkBox_payload_stateChanged(int arg1);
-
     void on_pbAdjustFilter_clicked();
-
     void on_twMessages_cellDoubleClicked(int row, int column);
-
     void on_comboBox_currentIndexChanged(int index);
-
     void on_checkBox_Direction_stateChanged(int arg1);
-
     void on_pbOpenJsonFolder_clicked();
 
 private:
     static const QString textRX;
     static const QString textTX;
     static const QString textEmpty;
+    static const QString textSettingsFileName;
 
     bool mShowDirection;
     bool mShowSof;
@@ -56,6 +52,7 @@ private:
     bool mShowPayload;
     bool mShowDirectionRx;
     bool mShowDirectionTx;
+    QJsonObject mSettings;
 
     enum {
         COLUMN_NUM = 0,
@@ -107,6 +104,11 @@ private:
     const QString ConvertMsgToText(const QByteArray &arr);
     void UpdateListItems();
     void UpdateListview();
+    void UpdateJsonsPathViev(const QString &path);
+    void SetNewJsonsPath(const QString &path);
+    void WriteSettingsToFile();
+    void ReadSettingsFromFile();
+    void ShowErrorMessage(const QString &message);
 
     bool isFilteredPersist(const QTableWidgetItem *item, const QStringList &filter);
 };

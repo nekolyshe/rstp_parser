@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "qdebug.h"
+#include "qjsondocument.h"
 #include "ui_mainwindow.h"
 
+#include <QMessageBox>
 #include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -23,9 +25,17 @@ MainWindow::MainWindow(QWidget *parent) :
     mPacketWindow = new packetWindow();
 
     initSlots();
+    ReadSettingsFromFile();
     initFilterText();
-
     UpdateCheckBoxes();
+    UpdateJsonsPathViev(mSettings["JSON_FOLDER"].toString());
+    switch (ParsedMessageBase::AddDescriptions(mSettings["JSON_FOLDER"].toString())) {
+    case ParsedMessageBase::PATH_DOEST_EXIST:
+        ShowErrorMessage("JSONS directory: " + mSettings["JSON_FOLDER"].toString() + " doesnt exist");
+        break;
+    default:
+        break;
+    }
 }
 
 MainWindow::~MainWindow()
@@ -169,9 +179,54 @@ void MainWindow::UpdateListview()
     setUpdatesEnabled(true);
 }
 
+void MainWindow::UpdateJsonsPathViev(const QString &path)
+{
+    ui->labelJSONSpath->setText("JSONs path: " + path);
+}
+
+void MainWindow::SetNewJsonsPath(const QString &path)
+{
+    mSettings["JSON_FOLDER"] = path;
+    WriteSettingsToFile();
+}
+
+void MainWindow::WriteSettingsToFile()
+{
+    QFile saveFile(qApp->applicationDirPath() + textSettingsFileName);
+
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        qWarning("WriteSettingsToFile: Couldn't open save file."); // TODO error push up
+    } else {
+        saveFile.write(QJsonDocument(mSettings).toJson());
+        saveFile.close();
+    }
+}
+
+void MainWindow::ReadSettingsFromFile()
+{
+    QFile loadFile(qApp->applicationDirPath() + textSettingsFileName);
+
+    if (!loadFile.open(QIODevice::ReadOnly)) {
+        qWarning("ReadSettingsFromFile: Couldn't open save file."); // TODO error push up
+    } else {
+        QByteArray saveData = loadFile.readAll();
+        mSettings = QJsonDocument::fromJson(saveData).object();//TODO error handling
+
+        loadFile.close();
+    }
+}
+
+void MainWindow::ShowErrorMessage(const QString &message)
+{
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error", message);
+        messageBox.setFixedSize(500,200);
+}
+
 const QString MainWindow::textRX("RX");
 const QString MainWindow::textTX("TX");
 const QString MainWindow::textEmpty("(empty)");
+const QString MainWindow::textSettingsFileName("/data/settings.json");
 
 bool MainWindow::isFilteredPersist(const QTableWidgetItem *item, const QStringList &filter) // TODO: looks like a piece of shit
 {
@@ -280,11 +335,22 @@ void MainWindow::on_checkBox_Direction_stateChanged(int arg1)
     UpdateListview();
 }
 
-
 void MainWindow::on_pbOpenJsonFolder_clicked()
 {
-    QString folderName = QFileDialog::getExistingDirectory(); //this, tr("Open folder with JSONS"), nullptr, "*"
-    qDebug()<< "JSONS folder: " << folderName;
-    ParsedMessageBase::AddDescriptions(folderName + "/");
+    QString folderName = QFileDialog::getExistingDirectory();
+    qDebug() << "JSONS folder: " << folderName;
+
+    folderName += "/";
+
+    SetNewJsonsPath(folderName);
+    UpdateJsonsPathViev(folderName);
+
+    switch (ParsedMessageBase::AddDescriptions(folderName)) {
+    case ParsedMessageBase::PATH_DOEST_EXIST:
+        ShowErrorMessage("JSONS directory: " + folderName + " doesnt exist");
+        break;
+    default:
+        break;
+    };
 }
 
